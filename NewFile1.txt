@@ -1,0 +1,11 @@
+Task 1: Please provide me with ten words appropriate for a student at the [Level] level related to any theme, but not the [Themes] on [fromLanguage]. Along with these words, I would like their translation into the [toLanguage].
+
+Task 2: Could you draft a listening comprehension text suitable for the same student level and theme mentioned in Task 1? Along with the text, please formulate questions on [toLanguage] language that will help understand the theme better and provide correct answers, also on [toLanguage] language.
+
+Task 3: I need you to create 3-4 sentences with gaps that the student will have to fill in. The sentences should align with the theme and be suitable for the student's level and also, you need to write an answers for this task
+
+Task 4: Please devise a grammar exercise that aligns with the student's level and the chosen theme. Include correct answers to the exercise as well.
+
+Task 5: For each word provided in Task 1, could you generate three incorrectly spelled versions? The idea is to use these in a matching exercise where the student matches a displayed image to the correct word amongst incorrect ones.
+
+Note: The language, theme, and student level remain consistent across all tasks. 
