@@ -11,7 +11,7 @@ public class Image
     
     public string ImageUri { get; set; }
     
-    public int RoutineId { get; set; }
+    public int AssignmentId { get; set; }
     
-    public Routine Routine { get; set; }
+    public Assignment Assignment { get; set; }
 }

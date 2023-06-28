@@ -9,7 +9,7 @@ public class Course
     
     public string Language { get; set; }
     
-    public double Progress { get; set; }
+    public double? Progress { get; set; }
     
     public List<Routine>? Routines { get; set; }
     

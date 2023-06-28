@@ -1,4 +1,5 @@
-﻿using LearnIOAPI.HttpResponses;
+﻿using LearnIOAPI.Data;
+using LearnIOAPI.HttpResponses;
 using LearnIOAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -20,18 +21,29 @@ public class UserRepository
     }
 
 
-    public async Task<ObjectResult> Create(User data)
+    public async Task<ObjectResult> Create(UserData data)
     {
         await db.Users.AddAsync(new User
         {
             Name = data.Name,
-            telegramID = data.telegramID,
-            Courses = data.Courses
+            MainLanguage = data.MainLanguage,
+            telegramID = data.telegramID
         });
         await db.SaveChangesAsync();
         return Created;
     }
-    public async Task<ObjectResult> Update(User data)
+
+    public async Task<bool>  AddCourse(int id, int courseId)
+    {
+        var user = await db.Users.FindAsync(id);
+        if (user == null) return false;
+        var course = await db.Courses.FindAsync(courseId);
+        if (course == null) return false;
+        user.Courses.Add(course);
+        await Update(user);
+        return true;
+    }
+    public async Task<bool> Update(User data)
     {
         try
         {
@@ -40,23 +52,23 @@ public class UserRepository
         catch (Exception e)
         {
             Console.Write(e);
-            return UserCannotBeDeleted;
+            return false;
         }
         await db.SaveChangesAsync();
-        return Updated;
+        return true;
     }
-    public async Task<ObjectResult> Delete(User data)
+    public async Task<bool> Delete(int id)
     {
         try
         {
-            db.Users.Remove(data);
+            db.Users.Remove(await Get(id));
         }
         catch (Exception e)
         {
             Console.Write(e);
-            return UserCannotBeDeleted;
+            return false;
         }
         await db.SaveChangesAsync();
-        return Deleted;
+        return true;
     }
 }

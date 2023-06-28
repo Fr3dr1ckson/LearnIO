@@ -7,13 +7,13 @@ public class Routine
     [Key, Required]
     public int Id { get; set; }
     
-    public List<Image> Images { get; set; }
-    
     public string Theme { get; set; }
     
-    public string AudioTaskText { get; set; }
+    public List<Assignment>? Assignments { get; set; }
     
     public int Mark { get; set; }
+    
+    public bool? Completed { get; set; }
     
     public int CourseId { get; set; }
     

@@ -13,12 +13,15 @@ namespace LearnIOAPI;
         public DbSet<Routine> Routines { get; set; }
         
         public DbSet<Image> Images { get; set; }
+        
+        public DbSet<Assignment> Assignments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new UserConfiguration());
             modelBuilder.ApplyConfiguration(new CourseConfiguration());
             modelBuilder.ApplyConfiguration(new RoutineConfiguration());
+            modelBuilder.ApplyConfiguration(new AssignmentConfiguration());
         }
         public ApplicationContext(DbContextOptions<ApplicationContext> options): base(options)
         {

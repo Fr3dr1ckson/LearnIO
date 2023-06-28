@@ -9,5 +9,7 @@ public class User
     
     public string Name { get; set; }
     
+    public string MainLanguage { get; set; }
+    
     public List<Course>? Courses { get; set; }
 }

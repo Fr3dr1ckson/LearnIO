@@ -30,9 +30,19 @@ public class EntityConfigs
     {
         public void Configure(EntityTypeBuilder<Routine> builder)
         {
-            builder.HasMany(r => r.Images)
+            builder.HasMany(r => r.Assignments)
                 .WithOne(i => i.Routine)
                 .HasForeignKey(i => i.RoutineId);
+        }
+    }
+    
+    public class AssignmentConfiguration : IEntityTypeConfiguration<Assignment>
+    {
+        public void Configure(EntityTypeBuilder<Assignment> builder)
+        {
+            builder.HasMany(r => r.Images)
+                .WithOne(i => i.Assignment)
+                .HasForeignKey(i => i.AssignmentId);
         }
     }
 }
