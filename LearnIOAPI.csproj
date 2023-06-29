@@ -27,4 +27,9 @@
 
 
 
+    <ItemGroup>
+      <Compile Remove="Controllers\RoutineController.cs" />
+      <Compile Remove="Models\Audio.cs" />
+    </ItemGroup>
+
 </Project>
