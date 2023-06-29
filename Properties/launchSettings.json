@@ -12,11 +12,12 @@
     "http": {
       "commandName": "Project",
       "dotnetRunMessages": true,
-      "launchBrowser": false,
+      "launchBrowser": true,
       "launchUrl": "swagger",
       "applicationUrl": "http://localhost:5029",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "GOOGLE_APPLICATION_CREDENTIALS": "C:\\Users\\onarg\\RiderProjects\\LearnIOAPI\\Google_Application_Creds\\course-work-390615-1cad8ae42d1f.json"
       }
     },
     "https": {
@@ -26,8 +27,7 @@
       "launchUrl": "swagger",
       "applicationUrl": "https://localhost:7087;http://localhost:5029",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "GOOGLE_APPLICATION_CREDENTIALS": "C:\\Users\\onarg\\RiderProjects\\LearnIOAPI\\Google_Application_Creds\\course-work-390615-1cad8ae42d1f.json"
+        "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
     "IIS Express": {

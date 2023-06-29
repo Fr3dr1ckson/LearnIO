@@ -36,13 +36,16 @@ public class LanguageController: Controller
 
     private readonly CourseRepository _courseRepository;
     
-    public LanguageController(ApplicationContext db)
+    private readonly ILogger<LanguageController> _logger;
+    
+    public LanguageController(ApplicationContext db, ILogger<LanguageController> logger)
     {
         _db = db;
         _assignmentRepository = new AssignmentRepository(db);
         _routineRepository = new RoutineRepository(db);
         _userRepository = new UserRepository(db);
         _courseRepository = new CourseRepository(db);
+        _logger = logger;
     }
     
     private readonly string _openAiKey;
@@ -62,7 +65,16 @@ public class LanguageController: Controller
     [HttpGet("GetUser")]
     public async Task<ObjectResult> GetUser(int id)
     {
-        var user = await _userRepository.Get(id);
+        var user = new User();
+        try
+        {
+            user = await _userRepository.Get(id);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError("Error: {e}");
+            throw;
+        }
         return user == null ? UserExceptions.NonExistent : UserExceptions.Found(user.Name);
     }
     [HttpPost("selectLanguage")]

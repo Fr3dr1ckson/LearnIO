@@ -31,6 +31,6 @@ namespace LearnIOAPI;
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=CourseWork;Username=postgres;Password=greenbaby2014");
+            optionsBuilder.UseNpgsql("Host=postgreazure.postgres.database.azure.com;Port=5432;Database=postgres;Username=postgre;Password=Greenb@by2014");
         }
     }
