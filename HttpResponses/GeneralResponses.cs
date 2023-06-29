@@ -23,6 +23,15 @@ public class GeneralResponses
         };
     }
     
+    
+    public static ObjectResult CannotBeUpdated(string entity)
+    {
+        return new ObjectResult(
+            new { Response = $"{entity} cannot be updated!" })
+        {
+            StatusCode = StatusCodes.Status500InternalServerError
+        };
+    }
     public static ObjectResult AlreadyExists(string entity)
     {
         return new ObjectResult(

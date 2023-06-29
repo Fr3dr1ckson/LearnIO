@@ -19,42 +19,42 @@ namespace LearnIOAPI.Controllers;
 [ApiController]
 public class LanguageController: Controller
 { 
-    private readonly ApplicationContext db;
+    private readonly ApplicationContext _db;
     
     private static readonly UnsplashClient Unsplash= new(new ClientOptions
     {
         AccessKey = "INGzGeUNxQxM2GYA-hl_ifB96KY4VSnbwFRbBy31qXg"
     });
 
-    private static readonly TextToSpeechClient ttsClient = TextToSpeechClient.Create();
+    private static readonly TextToSpeechClient TtsClient = TextToSpeechClient.Create();
     
-    private readonly UserRepository UserRepository;
+    private readonly UserRepository _userRepository;
 
-    private readonly RoutineRepository RoutineRepository;
+    private readonly RoutineRepository _routineRepository;
 
-    private readonly AssignmentRepository AssignmentRepository;
+    private readonly AssignmentRepository _assignmentRepository;
 
-    private readonly CourseRepository CourseRepository;
+    private readonly CourseRepository _courseRepository;
     
     public LanguageController(ApplicationContext db)
     {
-        this.db = db;
-        AssignmentRepository = new AssignmentRepository(db);
-        RoutineRepository = new RoutineRepository(db);
-        UserRepository = new UserRepository(db);
-        CourseRepository = new CourseRepository(db);
+        _db = db;
+        _assignmentRepository = new AssignmentRepository(db);
+        _routineRepository = new RoutineRepository(db);
+        _userRepository = new UserRepository(db);
+        _courseRepository = new CourseRepository(db);
     }
     
-    private readonly string OpenAiKey;
+    private readonly string _openAiKey;
     
     [HttpPost("register")]
     public async Task<ObjectResult> Register(UserData userCreds)
     {
-        if (await db.Users.FindAsync(userCreds.telegramID) != null)
+        if (await _db.Users.FindAsync(userCreds.telegramID) != null)
         {
             return UserExceptions.AlreadyExists;
         }
-        await UserRepository.Create(userCreds);
+        await _userRepository.Create(userCreds);
 
         return UserExceptions.Created;
     }
@@ -62,13 +62,13 @@ public class LanguageController: Controller
     [HttpGet("GetUser")]
     public async Task<ObjectResult> GetUser(int id)
     {
-        var user = await UserRepository.Get(id);
+        var user = await _userRepository.Get(id);
         return user == null ? UserExceptions.NonExistent : UserExceptions.Found(user.Name);
     }
     [HttpPost("selectLanguage")]
     public async Task<ObjectResult> ChooseLanguage(int id, string language)
     {
-        var user = await db.Users.Include(u => u.Courses).SingleOrDefaultAsync(u => u.telegramID == id);
+        var user = await _db.Users.Include(u => u.Courses).SingleOrDefaultAsync(u => u.telegramID == id);
         
         if (user == null) return UserExceptions.NonExistent;
         
@@ -76,7 +76,7 @@ public class LanguageController: Controller
                 .Find(c => c.Language == language) != null) 
             return CourseExceptions.AlreadySigned;
 
-        await CourseRepository.Create(id, language);
+        await _courseRepository.Create(id, language);
 
         return CourseExceptions.Added;
     }
@@ -84,21 +84,21 @@ public class LanguageController: Controller
     [HttpDelete("unregister")]
     public async Task<ObjectResult> UnRegister(int id)
     {
-       var user = await UserRepository.Delete(id);
+       var user = await _userRepository.Delete(id);
        return user ? UserExceptions.Created : UserCannotBeDeleted;
     }
     
     [HttpPost("routine")]
     public async Task<string> GenerateRoutine(int id, string language, string level)
     {
-        var user = await UserRepository.Get(id);
+        var user = await _userRepository.Get(id);
         if (user == null) return "UserExceptions.NonExistent";
-        var course = await db.Courses.FirstOrDefaultAsync(c => c.UserId == id && c.Language == language);
+        var course = await _db.Courses.FirstOrDefaultAsync(c => c.UserId == id && c.Language == language);
         
         string usedThemes;
         if (course != null)
         {
-                usedThemes = string.Join(", ", await db.Routines
+                usedThemes = string.Join(", ", await _db.Routines
                 .Where(routine => routine.CourseId == course.Id)
                 .Select(routine => routine.Theme)
                 .ToListAsync());
@@ -109,44 +109,73 @@ public class LanguageController: Controller
         }
         var tasksText = await FillTaskGaps(language, user.MainLanguage, level, usedThemes);
         var response = await GetTasks(tasksText);
-        string theme = tasksText["Theme: ".Length..];
+        await System.IO.File.WriteAllTextAsync("C:\\Users\\onarg\\RiderProjects\\LearnIOAPI\\Response.txt", response);
+        Console.WriteLine($"Response: {response}");
+        List<string> originWords = new();
+        var taskOne = new Dictionary<string, string>();
         var tasks = SplitTasks(response);
-        var taskOne = SplitTaskOneWords(tasks[0]);
-        var originWords = TakeOriginWords(taskOne);
-        string origins = originWords.Aggregate("", (current, word) => current + word);
-        return origins;
+        Console.WriteLine($"Tasks: {string.Join(", ", tasks)}");  
+
+        if(tasks.Length > 0)
+        {
+            Console.WriteLine($"Task[0]: {tasks[0]}");
+            taskOne = SplitTaskOneWords(tasks[0]);
+        }
+        if(tasks.Length == 0)
+        {
+            Console.WriteLine("No tasks found.");
+        }
+        else
+        {
+            taskOne = SplitTaskOneWords(tasks[0]);
+            Console.WriteLine($"Task One: {string.Join(", ", taskOne)}"); 
+
+            originWords = TakeOriginWords(taskOne);
+            Console.WriteLine($"Origin Words: {string.Join(", ", originWords)}");
+        }
+        string theme = "Theme: ";
+        int startIndex = response.IndexOf(theme, StringComparison.Ordinal);
+
+        if (startIndex != -1)
+        {
+            startIndex += theme.Length;
+            theme = response[startIndex..];
+            Console.WriteLine(theme); 
+        }
         var taskTwo = SplitTaskTwo(tasks[1], out var taskTwoText);
         var taskThree = SplitTaskThreeOrFour(tasks[2], true);
-        return originWords.ToString();
         var taskFour = SplitTaskThreeOrFour(tasks[3], false);
         var taskFive = SplitTaskFive(tasks[4], originWords);
-        var TasksButFirst = new List<Dictionary<string, List<string>>>
+        var tasksButFirst = new List<Dictionary<string, List<string>>>
         {
             taskTwo, taskThree, taskFour
         };
         var assignments = new List<Assignment>();
 
-        List<byte[]> firstTaskAudio = new List<byte[]>();
-        var wordsAndPictures = new List<string?>();
+        List<AudioData> firstTaskAudio = new List<AudioData>();
+        var wordsAndPictures = new Dictionary<string, string?>();
         foreach (var word in originWords)
         {
-            wordsAndPictures.Add(await GetImage(word));
+            wordsAndPictures[word] = await GetImage(word);
         }
         foreach (var word in originWords)
         {
-            firstTaskAudio.Add(await GetTTS(word));
+            firstTaskAudio.Add(new AudioData{Data = await GetTts(word)});
         }
 
-        var taskTwoAudio = await GetTTS(taskTwoText);
-        //List<Image> firstTaskImages = wordsAndPictures.Select(kvp => new Image { ImageName = kvp.Key, ImageUri = kvp.Value }).ToList();
-        string picture = wordsAndPictures.Aggregate("", (current, kvp) => current + $"{kvp}\n");
-        return picture;
+        var taskTwoAudio = await GetTts(taskTwoText);
+        List<ImageData> firstTaskImages = wordsAndPictures.Select(kvp => new ImageData { ImageName = kvp.Key, ImageUri = kvp.Value }).ToList();
         assignments.Add(new Assignment
         {
-            Answers = taskOne.Select(kvp => kvp.Key).ToArray(),
+            Answers = taskOne.Select(kvp => kvp.Value).ToArray(),
             Task = "Learn Words",
+            Images = firstTaskImages.Select(i => new Image
+            {
+                ImageName = i.ImageName,
+                ImageUri = i.ImageUri
+            }).ToList(),
             Questions = originWords.ToArray(),
-            Audio = firstTaskAudio,
+            Audios = firstTaskAudio.Select(a => new Audio{Data = a.Data}).ToList(),
             
         });
         var questions = new List<List<string>>();
@@ -160,7 +189,7 @@ public class LanguageController: Controller
         };
         
         
-        foreach (var task in TasksButFirst)
+        foreach (var task in tasksButFirst)
         {
             questions.Add(task["Questions"]);
             answers.Add(task["Answers"]);
@@ -175,10 +204,7 @@ public class LanguageController: Controller
                     {
                         Questions = questions.ToArray()[i].ToArray(),
                         Answers = answers.ToArray()[i].ToArray(),
-                        Audio = new List<byte[]?>
-                        {
-                            taskTwoAudio
-                        },
+                        Audios = new List<Audio>{new() {Data = taskTwoAudio}},
                         Task = assignmentTasks.ToArray()[i]
 
                     });
@@ -188,8 +214,8 @@ public class LanguageController: Controller
                     var answerFive = new List<string>();
                     foreach (var kvp in taskFive)
                     {
-                        questionsFive.Add(kvp.Key);
-                        answerFive.Add(kvp.Value);
+                        questionsFive.Add(kvp.Value);
+                        answerFive.Add(kvp.Key);
                     }
                     assignments.Add(new Assignment
                     {
@@ -212,7 +238,7 @@ public class LanguageController: Controller
                 }
             }
         }
-        await RoutineRepository.Create(id,language,new Routine
+        await _routineRepository.Create(id,language,new Routine
         {
             Theme = theme,
             Assignments = assignments,
@@ -259,9 +285,9 @@ public class LanguageController: Controller
         }
         return spellingDictionary;
     }
-    private static async Task<byte[]> GetTTS(string text)
+    private static async Task<byte[]> GetTts(string text)
     {
-        var response = await ttsClient.SynthesizeSpeechAsync(
+        var response = await TtsClient.SynthesizeSpeechAsync(
             new SynthesisInput { Text = text }, 
             new VoiceSelectionParams { LanguageCode = "en-US", SsmlGender = SsmlVoiceGender.Female },
             new AudioConfig { AudioEncoding = AudioEncoding.Mp3 });
@@ -340,19 +366,19 @@ public class LanguageController: Controller
     }
     private static Dictionary<string, string> SplitTaskOneWords(string task1)
     {
-        var lines = task1.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-    
+        var lines = task1.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.RemoveEmptyEntries);
+
         var dictionary = lines.Select(line => Regex.Replace(line, @"^\d+\.\s*", ""))
-            .Select(line => line.Split(new[] { '-' }, StringSplitOptions.RemoveEmptyEntries))
-            .Where(parts => parts.Length == 2)
-            .ToDictionary(parts => parts[0].Trim(), parts => parts[1].Trim());
-    
+            .Select(line => Regex.Split(line, @"s*-s*"))
+            .Where(parts => parts.Length >= 2)
+            .ToDictionary(parts => parts[0].Trim(), parts => string.Join("-", parts.Skip(1)).Trim());
+
         return dictionary;
     }
 
     private static async Task<string?> GetTasks(string tasksText)
     {
-        var api = new OpenAIAPI("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");
+        var api = new OpenAIAPI("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");
         var chat = api.Chat.CreateConversation();
         chat.AppendSystemMessage(tasksText);
         var response = await chat.GetResponseFromChatbotAsync();

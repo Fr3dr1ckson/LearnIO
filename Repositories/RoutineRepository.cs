@@ -40,6 +40,16 @@ public class RoutineRepository
         return Created("routine");
     }
 
+    public async Task<List<Assignment>> attachAssignment(int routineId)
+    {
+        var routine = await db.Routines.FindAsync(routineId);
+        List<Assignment> assignments = db.Assignments.Where(a => a.RoutineId == routineId).ToList();
+        routine.Assignments = assignments;
+        db.Routines.Update(routine);
+        await db.SaveChangesAsync();
+        return assignments;
+    } 
+
     public async Task<bool> sendMark(int id, int mark)
     {
         var routine = await db.Routines.FindAsync(id);
@@ -49,19 +59,50 @@ public class RoutineRepository
         await db.SaveChangesAsync();
         return true;
     }
-    public async Task<ObjectResult> Update(Routine data)
+    public async Task<bool> Update(int routineId, RoutineData data)
     {
+        var routineDb = new Routine();
         try
         {
-            db.Routines.Update(data);
+            routineDb=await db.Routines.FindAsync(routineId);
         }
         catch (Exception e)
         {
             Console.Write(e);
-            return CannotBeDeleted("routine");
+            return false;
         }
+        var routine = new Routine
+        {
+            Assignments = data.Assignments.Select(a => new Assignment
+            {
+                Answers = a.Answers,
+                Questions = a.Questions,
+                Task = a.Task,
+                Audios = a.Audios.Select(audio => new Audio
+                {
+                    Data = audio.Data
+                }).ToList(),
+                Images = a.Images.Select(image => new Image
+                {
+                    ImageName = image.ImageName,
+                    ImageUri = image.ImageUri,
+                }).ToList(),
+            }).ToList(),
+            Id = routineDb.Id,
+            Theme = data.Theme,
+            Mark = data.Mark,
+            Completed = data.Completed,
+            Course = routineDb.Course,
+            CourseId = routineDb.CourseId
+            
+        };
+
+        routineDb = routine;
+        
+        
+        db.Routines.Update(routineDb);
         await db.SaveChangesAsync();
-        return Updated("routine");
+        return true;
     }
     public async Task<ObjectResult> Delete(Routine data)
     {

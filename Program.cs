@@ -1,8 +1,10 @@
+using System.Text;
 using LearnIOAPI;
 using Microsoft.AspNetCore.Authentication.Negotiate;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+Console.OutputEncoding = Encoding.UTF8;
 
 // Add services to the container.
 

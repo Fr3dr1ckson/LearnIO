@@ -35,9 +35,7 @@ public class AssignmentRepository
 
     public async Task<ObjectResult> Create(int userId, string language, string theme, AssignmentData data)
     {
-        var user = await db.Users.FindAsync(userId);
-
-        var course = await db.Courses.FindAsync(userId, language);
+        var course = db.Courses.Where(course => course.UserId == userId && course.Language == language).ToList()[0];
 
         var Routines = new Routine
         {
@@ -46,7 +44,7 @@ public class AssignmentRepository
             Assignments = db.Assignments.Select(a => new Assignment
             {
                 Answers = data.Answers,
-                Audio = data.Audio,
+                Audios = data.Audios.Select(a => new Audio{Data = a.Data}).ToList(),
                 Questions = data.Questions,
                 Task = data.Task,
                 Images = a.Images.Select(image => new Image
@@ -66,11 +64,26 @@ public class AssignmentRepository
             StatusCode = StatusCodes.Status200OK
         };
     }
-    public async Task<ObjectResult> Update(Assignment data)
+    public async Task<ObjectResult> Update(AssignmentData data, int routineId)
     {
+        var routine = await db.Routines.FindAsync(routineId);
         try
         {
-            db.Assignments.Update(data);
+            db.Assignments.Update(new Assignment
+            {
+                Answers = data.Answers,
+                Audios = data.Audios.Select(a =>new Audio
+                {
+                    Data = a.Data
+                }).ToList(),
+                Images = data.Images.Select(i => new Image
+                {
+                    ImageName = i.ImageName,
+                    ImageUri = i.ImageUri
+                }).ToList(),
+                Task = data.Task,
+                Routine = routine
+            });
         }
         catch (Exception e)
         {

@@ -1,4 +1,6 @@
-﻿namespace LearnIOAPI.Data;
+﻿using LearnIOAPI.Models;
+
+namespace LearnIOAPI.Data;
 
 public class AssignmentData
 {
@@ -8,7 +10,7 @@ public class AssignmentData
     
     public string[] Answers { get; set; }
     
-    public List<byte[]>? Audio { get; set; }
+    public List<AudioData>? Audios { get; set; }
     
     public List<ImageData>? Images { get; set; }
 }

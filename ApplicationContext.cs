@@ -6,13 +6,15 @@ namespace LearnIOAPI;
 
     public sealed class ApplicationContext : DbContext 
     {
-        public DbSet<User?> Users { get; set; }
+        public DbSet<User> Users { get; set; }
         
         public DbSet<Course> Courses { get; set; }
         
         public DbSet<Routine> Routines { get; set; }
         
         public DbSet<Image> Images { get; set; }
+        
+        public DbSet<Audio> Audios { get; set; }
         
         public DbSet<Assignment> Assignments { get; set; }
 

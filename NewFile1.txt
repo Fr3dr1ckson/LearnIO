@@ -1,4 +1,4 @@
-Task 1: Please provide me with ten words appropriate for a student at the [Level] level related to any theme, but not the [Themes] on [fromLanguage]. Along with these words, I would like their translation into the [toLanguage].
+Task 1: Please provide me with ten words appropriate for a student at the [Level] level related to any theme, but not the [Themes], on [fromLanguage]. Along with these words, I would like their translation into the [toLanguage].
 
 Task 2: Could you draft a listening comprehension text suitable for the same student level and theme mentioned in Task 1? Along with the text, please formulate questions on [toLanguage] language that will help understand the theme better and provide correct answers, also on [toLanguage] language.
 
@@ -8,4 +8,71 @@ Task 4: Please devise a grammar exercise that aligns with the student's level an
 
 Task 5: For each word provided in Task 1, could you generate three incorrectly spelled versions? The idea is to use these in a matching exercise where the student matches a displayed image to the correct word amongst incorrect ones.
 
-Note: The language, theme, and student level remain consistent across all tasks. 
+Note: The language, theme, and student level remain consistent across all tasks. And please, after all tasks tell me the theme of them
+
+Example of how your response must look like:
+
+Task 1: 
+
+1. English word - it's ukrainian translation
+2. English word - it's ukrainian translation
+3. English word - it's ukrainian translation
+4. English word - it's ukrainian translation
+5. English word - it's ukrainian translation
+6. English word - it's ukrainian translation
+7. English word - it's ukrainian translation
+8. English word - it's ukrainian translation
+9. English word - it's ukrainian translation
+10. English word - it's ukrainian translation
+
+Task 2: 
+Listening Comprehension Text:
+
+Some text about theme that you must select
+
+Questions:
+
+1. Question about text(On ukrainian)
+2. Question about text(On ukrainian)
+3. Question about text(On ukrainian)
+4. Question about text(On ukrainian)
+5. Question about text(On ukrainian)
+
+Answers: 
+1. Answer to question 1(on Ukrainian); 2. Answer to question 2(on Ukrainian); 3. Answer to question 3(on Ukrainian); 4. Answer to question 4(on Ukrainian); 5. Answer to question 5(on Ukrainian).
+
+Task 3: 
+Grammar: Fill in the blanks with the correct animal:
+
+1. Little sentence with blank in any place.
+2. Little sentence with blank in any place.
+3. Little sentence with blank in any place.
+4. Little sentence with blank in any place.
+
+Answers:
+1. Answer to question 1; 2. Answer to question 2; 3. Answer to question 3; 4. Answer to question 4.
+
+Task 4: 
+Grammar Exercise: Complete the sentences with 'is' or 'are'. Not necessary to use exactly is or are
+
+1. Little sentence with blank in any place.
+2. Little sentence with blank in any place.
+3. Little sentence with blank in any place.
+4. Little sentence with blank in any place.
+
+Answers: 
+1. Answer to question 1; 2. Answer to question 2; 3. Answer to question 3; 4. Answer to question 4.
+
+Task 5:
+Incorrect Spellings:
+
+1. Incorrectly written word from task 1, Incorrectly written word from task 1, Incorrectly written word from task 1
+2. Incorrectly written word from task 1, Incorrectly written word from task 1, Incorrectly written word from task 1
+3. Incorrectly written word from task 1, Incorrectly written word from task 1, Incorrectly written word from task 1
+4. Incorrectly written word from task 1, Incorrectly written word from task 1, Incorrectly written word from task 1
+5. Incorrectly written word from task 1, Incorrectly written word from task 1, Incorrectly written word from task 1
+6. Incorrectly written word from task 1, Incorrectly written word from task 1, Incorrectly written word from task 1
+7. Incorrectly written word from task 1, Incorrectly written word from task 1, Incorrectly written word from task 1
+8. Incorrectly written word from task 1, Incorrectly written word from task 1, Incorrectly written word from task 1
+9. Incorrectly written word from task 1, Incorrectly written word from task 1, Incorrectly written word from task 1
+10. Incorrectly written word from task 1, Incorrectly written word from task 1, Incorrectly written word from task 1

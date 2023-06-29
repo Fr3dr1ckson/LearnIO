@@ -12,7 +12,7 @@ public class Assignment
     
     public string? Task { get; set; }
     
-    public List<byte[]?> Audio { get; set; }
+    public List<Audio>? Audios { get; set; }
     
     public List<Image>? Images { get; set; }
     

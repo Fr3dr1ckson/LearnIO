@@ -43,6 +43,10 @@ public class EntityConfigs
             builder.HasMany(r => r.Images)
                 .WithOne(i => i.Assignment)
                 .HasForeignKey(i => i.AssignmentId);
+            
+            builder.HasMany(r => r.Audios)
+                .WithOne(i => i.Assignment)
+                .HasForeignKey(i => i.AssignmentId);
         }
     }
 }
